@@ -50,8 +50,6 @@ import one.tracking.framework.generator.util.PolylineEncoderDecoder;
 import one.tracking.framework.generator.util.PolylineEncoderDecoder.LatLngZ;
 
 /**
- * TODO: Use
- *
  * @author Marko Voß
  *
  */
