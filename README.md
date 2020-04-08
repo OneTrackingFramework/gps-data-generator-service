@@ -10,7 +10,7 @@ This project is based on: https://github.com/mstahv/spring-boot-spatial-example 
 | Property | Description |
 | --- | --- |
 | app.apiKey | The API key to be used for the HERE Routing API |
-| app.storage.file | The location of the CSV file to store already calculated routes to on server shutdown and load the at the next server startup. For example: ${java.io.tmpdir}/db.csv |
+| app.storage.file | The location of the CSV file to store already calculated routes to. Routes will be stored on server shutdown and loaded the at the next server startup. For example: ${java.io.tmpdir}/db.csv |
 | app.envelope.start | The starting point of the envelope to generate points within. For example: POINT (lat lon) |
 | app.envelope.end | The ending point of the envelope to generate points within. For example: POINT (lat lon) |
 | app.create.amount.users | The amount of UUIDs to generate used as userIds. Minimum: 0 (no generation of points) |
