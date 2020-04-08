@@ -15,3 +15,8 @@ This project is based on: https://github.com/mstahv/spring-boot-spatial-example 
 | app.envelope.end | The ending point of the envelope to generate points within. For example: POINT (lat lon) |
 | app.create.amount.users | The amount of UUIDs to generate used as userIds. Minimum: 0 (no generation of points) |
 | app.create.amount.travels | The amount of travels to generate per userId. Minimum: 1 (this will generate two points and calculate the route between these two points) |
+
+# Functionality
+
+On server startup the stored data in the configured CSV file will be loaded if exists. Depending on the configuration of how many userIds and travels should be generated, the server will generate these routes utilizing the HERE Routing API. All data will be stored in a local H2 database (or MySQL) supporting spatial data. If the server is shutdown, the content of the database will be written back to the configured CSV file.
+You can view the generated data on the Vaadin UI. (http://localhost:8080 by default)
