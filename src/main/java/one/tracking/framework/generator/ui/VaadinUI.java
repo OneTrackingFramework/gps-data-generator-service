@@ -2,20 +2,21 @@ package one.tracking.framework.generator.ui;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Polygon;
-import org.vaadin.addon.leaflet.AbstractLeafletLayer;
+import org.vaadin.addon.leaflet.LCircleMarker;
+import org.vaadin.addon.leaflet.LLayerGroup;
 import org.vaadin.addon.leaflet.LMap;
 import org.vaadin.addon.leaflet.LOpenStreetMapLayer;
 import org.vaadin.addon.leaflet.LTileLayer;
 import org.vaadin.addon.leaflet.shared.Bounds;
 import org.vaadin.addon.leaflet.shared.Point;
-import org.vaadin.addon.leaflet.util.JTSUtil;
 import org.vaadin.viritin.grid.MGrid;
 import org.vaadin.viritin.label.MLabel;
 import org.vaadin.viritin.layouts.MHorizontalLayout;
@@ -135,10 +136,31 @@ public class VaadinUI extends UI implements Window.CloseListener, FilterPanelObs
     /* ... and map */
     this.map.removeAllComponents();
     this.map.addBaseLayer(this.osmTiles, "OSM");
+
+    final Map<String, LLayerGroup> groups = new HashMap<>();
+
     for (final SpatialEvent spatialEvent : events) {
-      addEventVector(spatialEvent.getLocation(), spatialEvent);
-      // addEventVector(spatialEvent.getRoute(), spatialEvent);
+
+      final LCircleMarker lMarker = new LCircleMarker(
+          spatialEvent.getLocation().getY(),
+          spatialEvent.getLocation().getX(),
+          2);
+      lMarker.setColor(getColor(spatialEvent.getUserId()));
+      lMarker.setWidth(1, Unit.POINTS);
+      lMarker.setOpacity(.5);
+
+      LLayerGroup group = groups.get(spatialEvent.getUserId());
+      if (group == null) {
+        group = new LLayerGroup();
+      }
+
+      group.addComponent(lMarker);
+      groups.put(spatialEvent.getUserId(), group);
+
     }
+
+    groups.values().forEach(c -> this.map.addLayer(c));
+
     if (!this.filterPanel.isOnlyOnMap()) {
       this.map.zoomToContent();
     }
@@ -159,21 +181,8 @@ public class VaadinUI extends UI implements Window.CloseListener, FilterPanelObs
     return polygon;
   }
 
-  private void addEventVector(final Geometry g, final SpatialEvent spatialEvent) {
-    if (g != null) {
-      /*
-       * JTSUtil will make LMarker for point event, LPolyline for events with route
-       */
-      final AbstractLeafletLayer layer = (AbstractLeafletLayer) JTSUtil.toLayer(g);
-
-      /* Add click listener to open event editor */
-      // layer.addClickListener(e -> {
-      // this.editor.setEntity(spatialEvent);
-      // this.editor.focusFirst();
-      // this.editor.openInModalPopup();
-      // });
-      this.map.addLayer(layer);
-    }
+  private String getColor(final String userId) {
+    return "#" + Integer.toHexString(userId.hashCode()).substring(0, 6);
   }
 
   @Override
